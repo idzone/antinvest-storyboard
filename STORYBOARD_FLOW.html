@@ -182,6 +182,22 @@
       overflow: hidden;
       box-shadow: 0 10px 26px rgba(0,0,0,.35);
       user-select: none;
+      isolate: isolate;
+    }
+    .node .badge{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      background: rgba(0,0,0,.7);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #e5e7eb;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: .9rem;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.25);
     }
     .node .thumb{
       width: 100%;
@@ -353,6 +369,17 @@
       const doc = new DOMParser().parseFromString(htmlText, "text/html");
       const cards = Array.from(doc.querySelectorAll(".card[id]"));
 
+      // Секцийн дарааллаар 1.1, 1.2 ... дугаар тооцоолох
+      const numberById = new Map();
+      const sections = Array.from(doc.querySelectorAll("section[id]"));
+      sections.forEach((section, sIdx) => {
+        let idx = 0;
+        for (const card of Array.from(section.querySelectorAll(".card[id]"))) {
+          idx += 1;
+          numberById.set(card.id, `${sIdx + 1}.${idx}`);
+        }
+      });
+
       const sectionFirstCard = new Map();
       for (const section of Array.from(doc.querySelectorAll("section[id]"))) {
         const first = section.querySelector(".card[id]");
@@ -369,6 +396,7 @@
         nodes.push({
           id: card.id,
           sectionId: section ? section.id : "misc",
+          number: numberById.get(card.id) || "",
           imgSrc: img ? img.getAttribute("src") : "",
           title: nameEl ? nameEl.textContent.trim() : card.id,
           folder: pathEl ? pathEl.textContent.trim() : "",
@@ -676,15 +704,17 @@
         d.style.left = (pos[n.id]?.x ?? 0) + "px";
         d.style.top = (pos[n.id]?.y ?? 0) + "px";
         d.dataset.id = n.id;
+        if (n.number) d.dataset.number = n.number;
 
         const imgHtml = n.imgSrc
           ? `<img class="thumb" src="${n.imgSrc}" alt="">`
           : `<div class="thumb" style="display:grid; place-items:center; color: var(--muted); font-size:.8rem;">No image</div>`;
 
         d.innerHTML = `
+          ${n.number ? `<div class="badge">${escapeHtml(n.number)}</div>` : ""}
           ${imgHtml}
           <div class="meta">
-            <p class="title">${escapeHtml(n.id)} · ${escapeHtml(n.title)}</p>
+            <p class="title">${escapeHtml((n.number || n.id) + " · " + n.title)}</p>
             <div class="path" title="${escapeHtml(n.folder)}">${escapeHtml(n.folder || "—")}</div>
           </div>
         `;
