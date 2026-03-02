@@ -47,7 +47,10 @@
 </head>
 <body>
   <h1>ANTInvest — Гол Storyboard</h1>
-  <p class="subtitle">Аппын бүх дэлгэцийн скриншот ба хавтасны газрын зураг. <strong>Энэ хуудсыг хэрэглэгч болон backend хөгжүүлэгчид гол лавлагаа болгон ашиглана.</strong></p>
+  <p class="subtitle">
+    Аппын бүх дэлгэцийн скриншот ба хавтасны газрын зураг. <strong>Энэ хуудсыг хэрэглэгч болон backend хөгжүүлэгчид гол лавлагаа болгон ашиглана.</strong>
+    <br/>Flow диаграм (FlutterFlow маяг): <a href="STORYBOARD_FLOW.html">STORYBOARD_FLOW.html</a>
+  </p>
 
   <div class="hero">
     <p><strong>Энэ хуудас юу вэ?</strong> ANT Invest Club аппын дэлгэцүүдийг нэг дороос харах гол storyboard. Дэлгэц бүрт <strong>дугаар</strong> өгсөн (1, 2, 3, …) — зураач, хөгжүүлэгч «дэлгэц 12», «screen 23» гэж лавлагаа өгч болно. Зураг <strong>ямар хавтаст</strong> байгааг доорх ногоон шошгоноос харна.</p>
@@ -233,5 +236,24 @@
   </section>
 
   <p class="subtitle" style="margin-top: 48px;">Дэлгэц бүр дээрх <strong>01_auth/…</strong> шошго нь тухайн скриншот ямар хавтаст байгааг заана. <a href="https://github.com/idzone/antinvest-storyboard">GitHub</a></p>
+
+  <script>
+    // Allow STORYBOARD_FLOW.html to read index.html even in file:// mode (where fetch may be blocked).
+    // Communication is done via postMessage (no DOM access needed).
+    (function () {
+      window.addEventListener("message", function (event) {
+        const d = event && event.data;
+        if (!d || d.type !== "ANTINVEST_REQUEST_INDEX_HTML") return;
+        try {
+          event.source && event.source.postMessage(
+            { type: "ANTINVEST_INDEX_HTML", html: document.documentElement.outerHTML },
+            "*"
+          );
+        } catch (e) {
+          // ignore
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

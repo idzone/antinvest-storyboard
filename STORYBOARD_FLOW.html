@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ANTInvest — Flow Storyboard</title>
+  <style>
+    :root{
+      --bg: #1b1d2a;
+      --panel: rgba(0,0,0,.25);
+      --panelBorder: rgba(255,255,255,.10);
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #2dd4bf;
+      --nodeBg1: #2a2a42;
+      --nodeBg2: #1f2233;
+      --nodeBorder: #3b3b5c;
+      --nodeW: 160px;
+      --imgH: 190px;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(45,212,191,.18), transparent 60%),
+                  radial-gradient(900px 500px at 95% 20%, rgba(59,130,246,.14), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+    header{
+      padding: 18px 20px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: rgba(27,29,42,.72);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .top{
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    h1{
+      font-size: 1.1rem;
+      margin: 0;
+      letter-spacing: .2px;
+    }
+    .sub{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.35;
+    }
+    .sub a{ color: #7dd3fc; text-decoration: none; }
+    .sub a:hover{ text-decoration: underline; }
+
+    .controls{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chip{
+      background: var(--panel);
+      border: 1px solid var(--panelBorder);
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .85rem;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip strong{ color: var(--text); font-weight: 650; }
+    .search{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--panel);
+      border: 1px solid var(--panelBorder);
+      border-radius: 999px;
+      padding: 8px 10px;
+      min-width: 270px;
+    }
+    .search input{
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: .9rem;
+    }
+    .btn{
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: .85rem;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn:active{ transform: translateY(1px); }
+
+    .legend{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 18px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .legend-item{ display: flex; gap: 8px; align-items: center; }
+    .legend-line{ width: 34px; height: 0; border-top: 2px solid var(--accent); }
+    .legend-line.dashed{ border-top-style: dashed; }
+    .legend-dot{
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid rgba(255,255,255,.9);
+      position: relative;
+    }
+    .legend-dot::after{
+      content: "×";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      color: rgba(255,255,255,.95);
+      line-height: 1;
+    }
+
+    .viewport{
+      height: calc(100vh - 140px);
+      position: relative;
+      overflow: hidden;
+      cursor: grab;
+    }
+    .viewport.grabbing{ cursor: grabbing; }
+    .world{
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+    svg.edges{
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .edges path{
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+      opacity: .88;
+    }
+    .edges path.dashed{
+      stroke-dasharray: 8 6;
+      opacity: .75;
+    }
+    .edges path.hidden{
+      opacity: .35;
+      stroke-dasharray: 2 8;
+    }
+
+    .node{
+      position: absolute;
+      width: var(--nodeW);
+      border-radius: var(--radius);
+      border: 1px solid var(--nodeBorder);
+      background: linear-gradient(180deg, var(--nodeBg1), var(--nodeBg2));
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+      user-select: none;
+    }
+    .node .thumb{
+      width: 100%;
+      height: var(--imgH);
+      background: rgba(0,0,0,.25);
+      display: block;
+      object-fit: cover;
+      object-position: top;
+    }
+    .node .meta{
+      padding: 8px 10px 10px;
+      background: rgba(0,0,0,.18);
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .node .title{
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .node .path{
+      margin-top: 5px;
+      font-size: .7rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .node .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: .7rem;
+    }
+    .node .pill a{
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 650;
+    }
+    .node .pill a:hover{ text-decoration: underline; }
+
+    .node.sheet{ border-style: dashed; border-color: rgba(45,212,191,.75); }
+    .node.highlight{ outline: 3px solid rgba(125,211,252,.8); outline-offset: 2px; }
+
+    .loading{
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .error{
+      max-width: 880px;
+      margin: 20px auto;
+      background: rgba(239,68,68,.10);
+      border: 1px solid rgba(239,68,68,.28);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #fecaca;
+    }
+    .error code{
+      color: #fca5a5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div>
+        <h1>ANTInvest — Flow Storyboard (FlutterFlow маяг)</h1>
+        <p class="sub">
+          Бүх screen-ийг хайрцаг болгон байрлуулаад, <strong>“Дараагийн”</strong> холбоос бүрийг сумтайгаар зурна.
+          Эх өгөгдөл: <a href="index.html">index.html</a>.
+        </p>
+      </div>
+      <div class="controls">
+        <div class="search" title="Screen хайх (id / нэр / хавтас)">
+          <span style="color: var(--muted); font-size: .85rem;">Хайх</span>
+          <input id="q" type="text" placeholder="ж: screen-12 / savings / профайл…" />
+        </div>
+        <button class="btn" id="resetView" type="button">View reset</button>
+        <button class="btn" id="resetLayout" type="button">Layout reset</button>
+        <div class="chip"><strong id="statNodes">0</strong> screens</div>
+        <div class="chip"><strong id="statEdges">0</strong> arrows</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-line"></span> Navigate / Flow</div>
+      <div class="legend-item"><span class="legend-line dashed"></span> Modal / Bottom sheet (таамгаар)</div>
+      <div class="legend-item"><span class="legend-dot"></span> Hidden / Optional (таамгаар)</div>
+      <div class="legend-item"><span style="color: var(--muted);">Tip:</span> canvas-ийг drag/pan, wheel-ээр zoom, node-ийг drag хийж байрлалыг хадгална.</div>
+    </div>
+  </header>
+
+  <div id="viewport" class="viewport" aria-label="Flow canvas">
+    <div id="loading" class="loading">Flow өгөгдөл уншиж байна…</div>
+    <div id="world" class="world" hidden>
+      <svg id="edges" class="edges" width="1" height="1">
+        <defs>
+          <marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(45,212,191,.95)"></path>
+          </marker>
+        </defs>
+      </svg>
+      <div id="nodes"></div>
+    </div>
+  </div>
+
+  <script>
+    const INDEX_PATH = "index.html";
+    const STORAGE_KEY = "antinvest_storyboard_flow_positions_v1";
+
+    const NODE_W = 160;
+    const NODE_H = 270; // approximate (img + meta)
+    const COL_GAP = 120;
+    const ROW_GAP = 70;
+    const PAD = 80;
+
+    function norm(s){ return (s || "").toLowerCase().trim(); }
+    function isSheetLike(text){
+      const t = norm(text);
+      return t.includes("модал") || t.includes("modal") || t.includes("bottom sheet") || t.includes("dialog");
+    }
+    function isHiddenLike(text){
+      const t = norm(text);
+      return t.includes("optional") || t.includes("hidden") || t.includes("сонголт") || t.includes("боломжит");
+    }
+
+    function parseIndex(htmlText){
+      const doc = new DOMParser().parseFromString(htmlText, "text/html");
+      const cards = Array.from(doc.querySelectorAll(".card[id]"));
+
+      const sectionFirstCard = new Map();
+      for (const section of Array.from(doc.querySelectorAll("section[id]"))) {
+        const first = section.querySelector(".card[id]");
+        if (first) sectionFirstCard.set(section.id, first.id);
+      }
+
+      const nodes = [];
+      for (const card of cards) {
+        const img = card.querySelector("img");
+        const nameEl = card.querySelector(".name");
+        const pathEl = card.querySelector(".path");
+        const section = card.closest("section[id]");
+
+        nodes.push({
+          id: card.id,
+          sectionId: section ? section.id : "misc",
+          imgSrc: img ? img.getAttribute("src") : "",
+          title: nameEl ? nameEl.textContent.trim() : card.id,
+          folder: pathEl ? pathEl.textContent.trim() : "",
+          rawNext: (card.querySelector(".next")?.textContent || "").trim()
+        });
+      }
+
+      const nodeById = new Map(nodes.map(n => [n.id, n]));
+
+      const edges = [];
+      for (const card of cards) {
+        const from = card.id;
+        const nextLinks = Array.from(card.querySelectorAll(".next a[href^='#']"));
+        for (const a of nextLinks) {
+          const raw = a.getAttribute("href").slice(1);
+          const mapped = sectionFirstCard.get(raw) || raw;
+          if (!nodeById.has(mapped)) continue;
+
+          const toNode = nodeById.get(mapped);
+          const edgeText = `${(card.querySelector(".name")?.textContent || "")} -> ${(toNode?.title || mapped)}`;
+          edges.push({
+            from,
+            to: mapped,
+            dashed: isSheetLike(a.textContent) || isSheetLike(toNode?.title) || isSheetLike(toNode?.rawNext),
+            hidden: isHiddenLike(a.textContent) || isHiddenLike(toNode?.title)
+          });
+        }
+      }
+
+      // De-duplicate edges
+      const seen = new Set();
+      const uniqEdges = [];
+      for (const e of edges) {
+        const key = `${e.from}=>${e.to}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        uniqEdges.push(e);
+      }
+
+      // Preserve section order by DOM order
+      const sectionOrder = Array.from(doc.querySelectorAll("section[id]")).map(s => s.id);
+
+      return { nodes, edges: uniqEdges, sectionOrder };
+    }
+
+    function loadPositions(){
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+    function savePositions(pos){
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(pos)); } catch {}
+    }
+
+    function initialLayout(nodes, sectionOrder){
+      const orderIndex = new Map(sectionOrder.map((id, i) => [id, i]));
+      const sections = new Map();
+      for (const n of nodes) {
+        if (!sections.has(n.sectionId)) sections.set(n.sectionId, []);
+        sections.get(n.sectionId).push(n);
+      }
+      for (const arr of sections.values()) {
+        arr.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: "base" }));
+      }
+
+      const sectionIds = Array.from(sections.keys()).sort((a, b) => (orderIndex.get(a) ?? 999) - (orderIndex.get(b) ?? 999));
+      const pos = {};
+      sectionIds.forEach((sid, colIdx) => {
+        const arr = sections.get(sid) || [];
+        arr.forEach((n, rowIdx) => {
+          pos[n.id] = {
+            x: PAD + colIdx * (NODE_W + COL_GAP),
+            y: PAD + rowIdx * (NODE_H + ROW_GAP)
+          };
+        });
+      });
+      return pos;
+    }
+
+    function computeWorldSize(pos){
+      let maxX = 0, maxY = 0;
+      for (const p of Object.values(pos)) {
+        maxX = Math.max(maxX, p.x + NODE_W);
+        maxY = Math.max(maxY, p.y + NODE_H);
+      }
+      return { w: Math.max(1200, maxX + PAD), h: Math.max(800, maxY + PAD) };
+    }
+
+    function elbowPath(from, to){
+      const dx = to.x - from.x;
+      const midX = from.x + dx * 0.55;
+      return `M ${from.x} ${from.y} L ${midX} ${from.y} L ${midX} ${to.y} L ${to.x} ${to.y}`;
+    }
+
+    function drawEdges(svg, edges, pos){
+      while (svg.lastChild && svg.lastChild.tagName !== "defs") svg.removeChild(svg.lastChild);
+      // Keep <defs> as first child
+      const defs = svg.querySelector("defs");
+      svg.innerHTML = "";
+      svg.appendChild(defs);
+
+      for (const e of edges) {
+        const p1 = pos[e.from];
+        const p2 = pos[e.to];
+        if (!p1 || !p2) continue;
+
+        // Choose sides based on direction
+        const fromPt = {
+          x: p1.x + (p2.x >= p1.x ? NODE_W : 0),
+          y: p1.y + NODE_H * 0.45
+        };
+        const toPt = {
+          x: p2.x + (p2.x >= p1.x ? 0 : NODE_W),
+          y: p2.y + NODE_H * 0.45
+        };
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", elbowPath(fromPt, toPt));
+        path.setAttribute("marker-end", "url(#arrowHead)");
+        if (e.dashed) path.classList.add("dashed");
+        if (e.hidden) path.classList.add("hidden");
+        svg.appendChild(path);
+      }
+    }
+
+    function centerOn(viewport, world, state, worldX, worldY){
+      const rect = viewport.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      state.x = cx - worldX * state.scale;
+      state.y = cy - worldY * state.scale;
+      applyTransform(world, state);
+    }
+
+    function applyTransform(world, state){
+      world.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+    }
+
+    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+    function loadIndexHtmlViaIframe(timeoutMs = 4000){
+      return new Promise((resolve, reject) => {
+        const iframe = document.createElement("iframe");
+        iframe.src = INDEX_PATH;
+        iframe.setAttribute("aria-hidden", "true");
+        iframe.tabIndex = -1;
+        iframe.style.position = "fixed";
+        iframe.style.left = "-10000px";
+        iframe.style.top = "-10000px";
+        iframe.style.width = "10px";
+        iframe.style.height = "10px";
+        iframe.style.opacity = "0";
+        iframe.style.pointerEvents = "none";
+
+        let done = false;
+        const cleanup = () => {
+          window.removeEventListener("message", onMsg);
+          try { iframe.remove(); } catch {}
+        };
+        const finish = (fn) => (arg) => {
+          if (done) return;
+          done = true;
+          cleanup();
+          fn(arg);
+        };
+        const ok = finish(resolve);
+        const bad = finish(reject);
+
+        const timer = setTimeout(() => {
+          bad(new Error("Timed out reading index.html via iframe"));
+        }, timeoutMs);
+
+        function onMsg(event){
+          const d = event && event.data;
+          if (!d || d.type !== "ANTINVEST_INDEX_HTML") return;
+          clearTimeout(timer);
+          ok(d.html);
+        }
+        window.addEventListener("message", onMsg);
+
+        iframe.addEventListener("load", () => {
+          try {
+            iframe.contentWindow && iframe.contentWindow.postMessage(
+              { type: "ANTINVEST_REQUEST_INDEX_HTML" },
+              "*"
+            );
+          } catch (e) {
+            clearTimeout(timer);
+            bad(e);
+          }
+        });
+
+        document.body.appendChild(iframe);
+      });
+    }
+
+    async function main(){
+      const loading = document.getElementById("loading");
+      const viewport = document.getElementById("viewport");
+      const world = document.getElementById("world");
+      const nodesRoot = document.getElementById("nodes");
+      const edgesSvg = document.getElementById("edges");
+      const q = document.getElementById("q");
+      const statNodes = document.getElementById("statNodes");
+      const statEdges = document.getElementById("statEdges");
+      const resetView = document.getElementById("resetView");
+      const resetLayout = document.getElementById("resetLayout");
+
+      let indexHtml;
+      try {
+        const res = await fetch(INDEX_PATH, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+        indexHtml = await res.text();
+      } catch (err) {
+        try {
+          indexHtml = await loadIndexHtmlViaIframe();
+        } catch (err2) {
+          loading.remove();
+          const div = document.createElement("div");
+          div.className = "error";
+          div.innerHTML = `
+            <div style="font-weight:700; margin-bottom:6px;">index.html уншиж чадсангүй.</div>
+            <div style="color:#fecaca; line-height:1.45;">
+              <div style="margin-bottom:6px;">Fetch болон iframe fallback хоёулаа амжилтгүй.</div>
+              <div>Шийдэл: энгийн server асаагаад нээнэ (ж: <code>python -m http.server</code>) эсвэл GitHub Pages дээр нээнэ.</div>
+            </div>
+          `;
+          document.body.appendChild(div);
+          return;
+        }
+      }
+
+      const data = parseIndex(indexHtml);
+      statNodes.textContent = data.nodes.length;
+      statEdges.textContent = data.edges.length;
+
+      const stored = loadPositions();
+      const basePos = initialLayout(data.nodes, data.sectionOrder);
+      const pos = { ...basePos, ...stored };
+
+      const { w, h } = computeWorldSize(pos);
+      world.style.width = w + "px";
+      world.style.height = h + "px";
+      edgesSvg.setAttribute("width", w);
+      edgesSvg.setAttribute("height", h);
+      edgesSvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+
+      // Render nodes
+      nodesRoot.innerHTML = "";
+      for (const n of data.nodes) {
+        const d = document.createElement("div");
+        d.className = "node";
+        if (isSheetLike(n.title) || isSheetLike(n.rawNext)) d.classList.add("sheet");
+        d.style.left = (pos[n.id]?.x ?? 0) + "px";
+        d.style.top = (pos[n.id]?.y ?? 0) + "px";
+        d.dataset.id = n.id;
+
+        const imgHtml = n.imgSrc
+          ? `<img class="thumb" src="${n.imgSrc}" alt="">`
+          : `<div class="thumb" style="display:grid; place-items:center; color: var(--muted); font-size:.8rem;">No image</div>`;
+
+        d.innerHTML = `
+          ${imgHtml}
+          <div class="meta">
+            <p class="title">${escapeHtml(n.id)} · ${escapeHtml(n.title)}</p>
+            <div class="path" title="${escapeHtml(n.folder)}">${escapeHtml(n.folder || "—")}</div>
+            <div class="pill">Open: <a href="index.html#${encodeURIComponent(n.id)}" target="_blank" rel="noreferrer">index</a></div>
+          </div>
+        `;
+
+        nodesRoot.appendChild(d);
+      }
+
+      // Draw edges
+      drawEdges(edgesSvg, data.edges, pos);
+
+      // Show world
+      loading.remove();
+      world.hidden = false;
+
+      // Pan/zoom state
+      const state = { x: 20, y: 20, scale: 0.9 };
+      applyTransform(world, state);
+
+      resetView.addEventListener("click", () => {
+        state.x = 20; state.y = 20; state.scale = 0.9;
+        applyTransform(world, state);
+      });
+
+      resetLayout.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      });
+
+      // Viewport pan
+      let isPanning = false;
+      let panStart = null;
+      viewport.addEventListener("pointerdown", (e) => {
+        // Don't start pan when starting on a node (node dragging handled separately)
+        if (e.target.closest(".node")) return;
+        isPanning = true;
+        viewport.classList.add("grabbing");
+        viewport.setPointerCapture(e.pointerId);
+        panStart = { x: e.clientX, y: e.clientY, ox: state.x, oy: state.y };
+      });
+      viewport.addEventListener("pointermove", (e) => {
+        if (!isPanning || !panStart) return;
+        state.x = panStart.ox + (e.clientX - panStart.x);
+        state.y = panStart.oy + (e.clientY - panStart.y);
+        applyTransform(world, state);
+      });
+      viewport.addEventListener("pointerup", (e) => {
+        isPanning = false;
+        panStart = null;
+        viewport.classList.remove("grabbing");
+        try { viewport.releasePointerCapture(e.pointerId); } catch {}
+      });
+
+      // Zoom
+      viewport.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const worldX = (mx - state.x) / state.scale;
+        const worldY = (my - state.y) / state.scale;
+        const dir = e.deltaY > 0 ? -1 : 1;
+        const factor = dir > 0 ? 1.10 : 0.90;
+        const next = clamp(state.scale * factor, 0.25, 1.8);
+        state.scale = next;
+        state.x = mx - worldX * state.scale;
+        state.y = my - worldY * state.scale;
+        applyTransform(world, state);
+      }, { passive: false });
+
+      // Node drag (persists positions)
+      let drag = null;
+      nodesRoot.addEventListener("pointerdown", (e) => {
+        const node = e.target.closest(".node");
+        if (!node) return;
+        e.stopPropagation();
+        node.setPointerCapture(e.pointerId);
+        const id = node.dataset.id;
+        drag = {
+          id,
+          node,
+          startX: e.clientX,
+          startY: e.clientY,
+          baseX: pos[id]?.x ?? 0,
+          baseY: pos[id]?.y ?? 0
+        };
+      });
+      nodesRoot.addEventListener("pointermove", (e) => {
+        if (!drag) return;
+        const dx = (e.clientX - drag.startX) / state.scale;
+        const dy = (e.clientY - drag.startY) / state.scale;
+        const x = drag.baseX + dx;
+        const y = drag.baseY + dy;
+        pos[drag.id] = { x, y };
+        drag.node.style.left = x + "px";
+        drag.node.style.top = y + "px";
+        drawEdges(edgesSvg, data.edges, pos);
+      });
+      nodesRoot.addEventListener("pointerup", (e) => {
+        if (!drag) return;
+        try { drag.node.releasePointerCapture(e.pointerId); } catch {}
+        const storedNow = loadPositions();
+        storedNow[drag.id] = pos[drag.id];
+        savePositions(storedNow);
+        drag = null;
+      });
+
+      // Search + highlight + center
+      let lastHighlight = null;
+      function clearHighlight(){
+        if (lastHighlight) lastHighlight.classList.remove("highlight");
+        lastHighlight = null;
+      }
+      function findFirstMatch(query){
+        const t = norm(query);
+        if (!t) return null;
+        for (const n of data.nodes) {
+          if (norm(n.id).includes(t) || norm(n.title).includes(t) || norm(n.folder).includes(t)) {
+            return n.id;
+          }
+        }
+        return null;
+      }
+      q.addEventListener("input", () => {
+        clearHighlight();
+        const id = findFirstMatch(q.value);
+        if (!id) return;
+        const el = nodesRoot.querySelector(`.node[data-id="${CSS.escape(id)}"]`);
+        if (!el) return;
+        el.classList.add("highlight");
+        lastHighlight = el;
+      });
+      q.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        const id = findFirstMatch(q.value);
+        if (!id) return;
+        const p = pos[id];
+        if (!p) return;
+        // Center on node center
+        centerOn(viewport, world, state, p.x + NODE_W/2, p.y + NODE_H/2);
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    main();
+  </script>
+</body>
+</html>
