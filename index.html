@@ -152,7 +152,7 @@
     <div class="grid">
       <div class="card" id="screen-11"><span class="card-num">11</span><img src="screenshots/01_auth/onboard/onboard_savings_make_money.jpg" alt=""><div class="name">Онбординг 1 (эхний хуудас)</div><div class="path"><strong>01_auth/onboard/</strong></div><div class="next">Дараагийн: → <a href="#screen-10">Дэлгэц 10</a></div></div>
       <div class="card" id="screen-10"><span class="card-num">10</span><img src="screenshots/01_auth/onboard/onboard_06.jpg" alt=""><div class="name">Онбординг 2</div><div class="path"><strong>01_auth/onboard/</strong></div><div class="next">Дараагийн: → <a href="#screen-9">Дэлгэц 9</a></div></div>
-      <div class="card" id="screen-9"><span class="card-num">9</span><img src="screenshots/01_auth/onboard/onboard_05.jpg" alt=""><div class="name">Онбординг 3 (сүүлийн)</div><div class="path"><strong>01_auth/onboard/</strong></div><div class="next">Дараагийн: → <a href="#screen-7">Нэвтрэх (Login)</a></div></div>
+      <div class="card" id="screen-9"><span class="card-num">9</span><img src="screenshots/01_auth/onboard/onboard_05.jpg" alt=""><div class="name">Онбординг 3 (сүүлийн)</div><div class="path"><strong>01_auth/onboard/</strong></div><div class="next">Дараагийн: → <a href="#screen-12">Дэлгэц 12</a> (Нүүр)</div></div>
     </div>
   </section>
 
@@ -178,7 +178,7 @@
   <section id="biometric">
     <div class="folder-label">screenshots/01_auth/<strong>biometric (login)</strong><small>2 файл · Дэлгэц 7–8</small></div>
     <div class="grid">
-      <div class="card" id="screen-7"><span class="card-num">7</span><img src="screenshots/01_auth/biometric/biometric_login.jpg" alt=""><div class="name">Нэвтрэх (Login)</div><div class="path"><strong>01_auth/biometric/</strong></div><div class="next">Дараагийн: → <a href="#screen-8">Биометр</a>, <a href="#screen-12">Нүүр (main)</a>, <a href="#screen-11">Онбординг</a>, <a href="#screen-6">Бүртгүүлэх</a>, <a href="#resetpass-1">Нууц сэргээх</a></div></div>
+      <div class="card" id="screen-7"><span class="card-num">7</span><img src="screenshots/01_auth/biometric/biometric_login.jpg" alt=""><div class="name">Нэвтрэх (Login)</div><div class="path"><strong>01_auth/biometric/</strong></div><div class="next">Дараагийн: → <a href="#screen-8">Дэлгэц 8</a> эсвэл <a href="#screen-12">Нүүр 12</a></div></div>
       <div class="card" id="screen-8"><span class="card-num">8</span><img src="screenshots/01_auth/biometric/biometric_returning_user.jpg" alt=""><div class="name">Нэвтрэсэн хэрэглэгч (апп хаагаад буцаад орход — хуруу, нүүр, ID)</div><div class="path"><strong>01_auth/biometric/</strong></div><div class="next">Дараагийн: → <a href="#screen-12">Дэлгэц 12</a> (Нүүр)</div></div>
     </div>
   </section>
@@ -188,7 +188,7 @@
     <div class="grid">
       <div class="card" id="resetpass-1"><span class="card-num">1</span><img src="screenshots/01_auth/resetpass/resetpass_01_registration_number.png" alt=""><div class="name">Нууц үг сэргээх — Регистрийн дугаар оруулах</div><div class="path"><strong>01_auth/resetpass/</strong></div><div class="next">Дараагийн: → <a href="#resetpass-2">Утас баталгаажуулах</a></div></div>
       <div class="card" id="resetpass-2"><span class="card-num">2</span><img src="screenshots/01_auth/resetpass/resetpass_02_confirm_phone.png" alt=""><div class="name">Нууц үг сэргээх — Утасны дугаар баталгаажуулах (модал)</div><div class="path"><strong>01_auth/resetpass/</strong></div><div class="next">Дараагийн: → <a href="#resetpass-3">6 оронтой код</a></div></div>
-      <div class="card" id="resetpass-3"><span class="card-num">3</span><img src="screenshots/01_auth/resetpass/resetpass_03_verify_code.png" alt=""><div class="name">Нууц үг сэргээх — 6 оронтой код баталгаажуулах</div><div class="path"><strong>01_auth/resetpass/</strong></div><div class="next">Дараагийн: → <a href="#screen-7">Нэвтрэх</a></div></div>
+      <div class="card" id="resetpass-3"><span class="card-num">3</span><img src="screenshots/01_auth/resetpass/resetpass_03_verify_code.png" alt=""><div class="name">Нууц үг сэргээх — 6 оронтой код баталгаажуулах</div><div class="path"><strong>01_auth/resetpass/</strong></div><div class="next">Дараагийн: — (шинэ нууц үг тохируулах эсвэл Нэвтрэх)</div></div>
     </div>
   </section>
 
@@ -324,39 +324,6 @@
   </section>
 
   <p class="subtitle" style="margin-top: 48px;">Дэлгэц бүр дээрх <strong>01_auth/…</strong> шошго нь тухайн скриншот ямар хавтаст байгааг заана. <a href="https://github.com/idzone/antinvest-storyboard">GitHub</a></p>
-
-  <script>
-    // Автомат дугаарлалт (секцийн дарааллаар 1.1, 1.2, …) ба холбоосын текстийг шинэчлэх
-    (function () {
-      const sections = Array.from(document.querySelectorAll("section[id]"));
-      const idToNumber = {};
-      sections.forEach((section, sIdx) => {
-        let cIdx = 0;
-        section.querySelectorAll(".card[id]").forEach((card) => {
-          cIdx += 1;
-          const num = `${sIdx + 1}.${cIdx}`;
-          const numEl = card.querySelector(".card-num");
-          if (numEl) numEl.textContent = num;
-          idToNumber[card.id] = num;
-        });
-      });
-
-      const updateAnchors = (root) => {
-        root.querySelectorAll("a[href^='#']").forEach((a) => {
-          const target = (a.getAttribute("href") || "").replace("#", "");
-          if (idToNumber[target]) {
-            const prevLabel = a.dataset.label || a.textContent.trim();
-            a.dataset.label = prevLabel;
-            const hasOnlyDigits = /^[\d\s→'″″]+$/.test(prevLabel);
-            const suffix = !hasOnlyDigits && prevLabel && !prevLabel.startsWith(idToNumber[target]) ? ` · ${prevLabel}` : "";
-            a.textContent = `${idToNumber[target]}${suffix}`;
-          }
-        });
-      };
-
-      document.querySelectorAll(".flow-diagram, .flow-edges, .card .next").forEach(updateAnchors);
-    })();
-  </script>
 
   <script>
     // Allow STORYBOARD_FLOW.html to read index.html even in file:// mode (where fetch may be blocked).
