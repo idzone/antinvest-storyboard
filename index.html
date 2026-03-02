@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ANTInvest — Гол Storyboard (дэлгэц + хавтас)</title>
   <style>
-    :root { --card-w: 220px; --img-h: 480px; --gap: 16px; --radius: 12px; }
+    :root { --card-w: 320px; --img-h: 640px; --gap: 18px; --radius: 12px; }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; background: #1a1a2e; color: #e0e0e0; }
     h1 { font-size: 1.5rem; margin-bottom: 8px; }
@@ -17,7 +17,16 @@
     .folder-label small { font-weight: 400; color: #94a3b8; margin-left: 8px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap: var(--gap); }
     .card { background: #252540; border-radius: var(--radius); overflow: hidden; border: 1px solid #333; }
-    .card img { width: 100%; height: var(--img-h); object-fit: contain; object-position: top; display: block; background: #1a1a2e; }
+    .card img {
+      width: 100%;
+      height: auto;
+      max-height: var(--img-h);
+      object-fit: contain;
+      object-position: top;
+      display: block;
+      background: #1a1a2e;
+      image-rendering: -webkit-optimize-contrast;
+    }
     .card .name { padding: 10px 12px; font-size: 0.85rem; word-break: break-word; }
     .card .path { padding: 6px 12px 12px; font-size: 0.75rem; font-family: ui-monospace, monospace; color: #94a3b8; background: rgba(0,0,0,0.2); }
     .card .path strong { color: #4ade80; }
@@ -43,9 +52,27 @@
     .card .next { padding: 6px 12px 10px; font-size: 0.75rem; color: #2dd4bf; border-top: 1px dashed rgba(45, 212, 191, 0.4); display: flex; align-items: center; gap: 6px; }
     .card .next a { color: #2dd4bf; font-weight: 600; text-decoration: none; }
     .card .next a:hover { text-decoration: underline; }
+    .flow-edges { margin: 16px 0 20px; padding: 14px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(45, 212, 191, 0.4); border-radius: 10px; }
+    .flow-edges .flow-edges-title { font-size: 0.95rem; font-weight: 700; color: #2dd4bf; margin-bottom: 12px; }
+    .flow-edges .flow-edges-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .flow-edges .flow-edges-row a { flex-shrink: 0; display: block; width: 100px; border-radius: 8px; overflow: hidden; border: 2px solid rgba(45, 212, 191, 0.5); }
+    .flow-edges .flow-edges-row a:hover { border-color: #2dd4bf; }
+    .flow-edges .flow-edges-row a img { width: 100%; height: auto; display: block; max-height: 160px; object-fit: cover; }
+    .flow-edges .flow-arrow { color: #2dd4bf; font-size: 1.2rem; flex-shrink: 0; }
   </style>
 </head>
 <body>
+  <script>
+    // Default open to FLOW view only when top-level (not inside iframe)
+    // Add ?main=1 to stay on this page
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const isTop = window.top === window.self;
+      if (isTop && !params.has("main")) {
+        location.replace("STORYBOARD_FLOW.html");
+      }
+    })();
+  </script>
   <h1>ANTInvest — Гол Storyboard</h1>
   <p class="subtitle">
     Аппын бүх дэлгэцийн скриншот ба хавтасны газрын зураг. <strong>Энэ хуудсыг хэрэглэгч болон backend хөгжүүлэгчид гол лавлагаа болгон ашиглана.</strong>
@@ -61,15 +88,17 @@
         <span>Splash:</span> <a href="#splash">Splash</a><span>→</span>
         <span>ДАН:</span> <a href="#screen-1">1</a><span>→</span><a href="#screen-2">2</a><span>→</span><a href="#screen-3">3</a><span>→</span><a href="#screen-4">4</a>
         <span class="flow-sep">|</span>
-        <span>Онбординг:</span> <a href="#screen-11">11</a><span>→</span><a href="#screen-10">10</a><span>→</span><a href="#screen-9">9</a> <span class="flow-sep">|</span> <span>Auth:</span> <a href="#screen-6">6</a><span>→</span><a href="#screen-7">7</a><span>→</span><a href="#screen-8">8</a>
+        <span>Онбординг:</span> <a href="#screen-11">11</a><span>→</span><a href="#screen-10">10</a><span>→</span><a href="#screen-9">9</a> <span class="flow-sep">|</span> <span>Auth:</span> <a href="#screen-6">6</a><span>→</span><a href="#register-terms">6′</a><span>→</span><a href="#register-success">6″ Нэвтрэх эрх үүслээ</a><span>→</span><a href="#screen-7">7</a><span>→</span><a href="#screen-8">8</a>
         <span class="flow-sep">|</span>
         <span>Нүүр:</span> <a href="#screen-12">12</a><span>→</span><a href="#screen-13">13</a>
         <span class="flow-sep">|</span>
-        <span>Зээл:</span> <a href="#screen-14">14</a><span>→ … →</span><a href="#screen-37">37</a>
+        <span>Зээл:</span> <a href="#screen-14">14</a><span>→ … →</span><a href="#screen-22">22</a> <span class="flow-sep">(идэвхтэй байвал)</span> <a href="#screen-22-active-1">22→1</a><span>→</span><a href="#screen-22-active-2">22→2</a><span>→</span><a href="#screen-22-active-3">22→3</a><span>→</span><a href="#screen-22-active-4">22→4</a>/<a href="#screen-22-active-5">5</a>/<a href="#screen-22-active-6">6</a> <span class="flow-sep">|</span> <a href="#screen-23">23</a><span>→ … →</span><a href="#screen-37">37</a>
         <span class="flow-sep">|</span>
         <span>Хадгаламж:</span> <a href="#savings-01">1</a><span>→ … →</span><a href="#savings-04">4</a><span>→</span><a href="#screen-50">50</a><span>→ … →</span><a href="#screen-57">57</a>
         <span class="flow-sep">|</span>
-        <span>Профайл:</span> <a href="#screen-58">58</a><span>→ … →</span><a href="#screen-69">69</a>
+        <span>Гишүүнчлэл (danStatus=true, memberstatus=false):</span> <a href="#member-cta">70</a><span>→</span><a href="#member-contract">71</a><span>→</span><a href="#member-fee">72</a><span>→</span><a href="#member-qpay">73</a><span>→</span><a href="#member-done">74</a>
+        <span class="flow-sep">|</span>
+        <span>Профайл:</span> <a href="#screen-58">58</a><span>→</span><a href="#screen-58-flow-1">Цагаан горим 58→1</a><span>→</span><a href="#screen-58-flow-2">58→2</a><span>→</span><a href="#screen-58-flow-3">58→3</a><span>→</span><a href="#screen-58-flow-4">58→4</a><span>→</span><a href="#screen-58-flow-5">58→5</a> <span class="flow-sep">|</span> <span>Үндсэн:</span> <a href="#screen-59">59</a><span>→ … →</span><a href="#screen-69">69</a><span>→</span><a href="#screen-75">75 (Мэдэгдлүүд)</a>
       </div>
     </div>
     <p><strong>Холбоос:</strong> Энэ storyboard нь GitHub Pages дээр hostлогдсон. Хэрэглэгчид энэ хуудсыг <strong>https://idzone.github.io/antinvest-storyboard/</strong> хаягаар нээж үзүүлнэ.</p>
@@ -84,10 +113,11 @@
         <tr><td>splash</td><td>—</td><td>Апп нээгдэх splash (ANT INVEST GROW)</td><td>Launch, бренд</td></tr>
         <tr><td>onboard</td><td>9–11</td><td>Онбординг (11→10→9)</td><td>Анх нээлт</td></tr>
         <tr><td>dan_not_connected</td><td>1–4</td><td>ДАН холболт хийгээгүй хэрэглэгчид харагдах дэлгэц</td><td>Auth, дан холболт, SMS баталгаажуулалт</td></tr>
-        <tr><td>register</td><td>6, 6′</td><td>Бүртгэл үүсгэх, Үйлчилгээний нөхцөл (Зөвшөөрсөн)</td><td>Auth, SignUp, Terms</td></tr>
+        <tr><td>register</td><td>6, 6′, 6″</td><td>Бүртгэл үүсгэх, Үйлчилгээний нөхцөл, Нэвтрэх эрх амжилттай үүслээ</td><td>Auth, SignUp, Terms, Success</td></tr>
         <tr><td>biometric (login)</td><td>7–8</td><td>Нэвтрэх (Login), Нэвтрэсэн хэрэглэгч — хуруу, нүүр, ID</td><td>Auth, Login, биометр нэвтрэлт</td></tr>
         <tr><td>resetpass</td><td>—</td><td>Нууц үг сэргээх (регистр дугаар → утас баталгаажуулах → 6 оронтой код)</td><td>Auth, ResetPassword</td></tr>
         <tr><td>home</td><td>11′, 12–13</td><td>Нүүр (ДАН таниулах), дижитал зээлийн таб, зээлийн CTA</td><td>Main, homelist</td></tr>
+        <tr><td>member</td><td>70–74</td><td>Гишүүнчлэлийн урилга → гэрээ → хураамж (QPay)</td><td>danStatus=true &amp; memberstatus=false үед Memberline → Contract → Fee → QPay → Done</td></tr>
         <tr><td>loan</td><td>14–37</td><td>Зээлийн бүтээгдэхүүн, хүсэлт, төлөв, барьцаа, QPay</td><td>Loanreq, Activeloans, collateral, offer</td></tr>
         <tr><td>savings</td><td>1–4, 50–57</td><td>Идэвхтэй хадгаламж, дэлгэрэнгүй, орлого хийх, дансны хуулга</td><td>Saving, CreateSaving</td></tr>
         <tr><td>profile</td><td>58–69</td><td>Профайл цэс, тохиргоо, нууц солих, хувийн мэдээлэл, банкны данс, гэр бүл, ажил эрхлэлт, холбогдох, салбар</td><td>Profile, Settings, Resetpass, Bank, Family, Contact</td></tr>
@@ -104,6 +134,7 @@
     <a href="#biometric">Login / Biometric (7–8)</a>
     <a href="#resetpass">Нууц үг сэргээх</a>
     <a href="#home">Home</a>
+    <a href="#member">Member</a>
     <a href="#loan">Loan</a>
     <a href="#savings">Savings</a>
     <a href="#profile">Profile</a>
@@ -128,18 +159,19 @@
   <section id="dan_not_connected">
     <div class="folder-label">screenshots/01_auth/<strong>dan_not_connected</strong><small>4 файл · Дэлгэц 1–4</small></div>
     <div class="grid">
-      <div class="card" id="screen-1"><span class="card-num">1</span><img src="screenshots/01_auth/dan_not_connected/01_onboard_dan_confirm.png" alt=""><div class="name">01_onboard_dan_confirm</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: → <a href="#screen-2">Дэлгэц 2</a></div></div>
-      <div class="card" id="screen-2"><span class="card-num">2</span><img src="screenshots/01_auth/dan_not_connected/02_home_unconnected_dan_prompt.png" alt=""><div class="name">02_home_unconnected_dan_prompt</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: → <a href="#screen-3">Дэлгэц 3</a></div></div>
+      <div class="card" id="screen-1"><span class="card-num">1</span><img src="screenshots/01_auth/dan_not_connected/01_onboard_dan_confirm.png" alt=""><div class="name">01_Дан систем баталгаажуулах дэлгэц</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: → <a href="#screen-2">Дэлгэц 2</a></div></div>
+      <div class="card" id="screen-2"><span class="card-num">2</span><img src="screenshots/01_auth/dan_not_connected/02_home_unconnected_dan_prompt.png" alt=""><div class="name">02_home_Дан системээс мэдээлэл аваагүй үед харагдах дэлгэц</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: → <a href="#screen-3">Дэлгэц 3</a></div></div>
       <div class="card" id="screen-3"><span class="card-num">3</span><img src="screenshots/01_auth/dan_not_connected/03_auth_dan_connection_login.png" alt=""><div class="name">03_auth_dan_connection_login</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: → <a href="#screen-4">Дэлгэц 4</a></div></div>
       <div class="card" id="screen-4"><span class="card-num">4</span><img src="screenshots/01_auth/dan_not_connected/04_auth_dan_verification_sms.png" alt=""><div class="name">04_auth_dan_verification_sms</div><div class="path"><strong>01_auth/dan_not_connected/</strong></div><div class="next">Дараагийн: — (процесс дууснаас хойш Нүүр)</div></div>
     </div>
   </section>
 
   <section id="register">
-    <div class="folder-label">screenshots/01_auth/<strong>register</strong><small>2 файл · Дэлгэц 6, Үйлчилгээний нөхцөл</small></div>
+    <div class="folder-label">screenshots/01_auth/<strong>register</strong><small>3 файл · Дэлгэц 6, Нэвтрэх эрх үүслээ, Үйлчилгээний нөхцөл</small></div>
     <div class="grid">
-      <div class="card" id="screen-6"><span class="card-num">6</span><img src="screenshots/01_auth/register/register_burtgel_uusgeh.jpg" alt=""><div class="name">Бүртгэл үүсгэх (auth/register)</div><div class="path"><strong>01_auth/register/</strong></div><div class="next">Дараагийн: → <a href="#register-terms">Үйлчилгээний нөхцөл</a> → <a href="#screen-7">Дэлгэц 7</a></div></div>
-      <div class="card" id="register-terms"><span class="card-num">6′</span><img src="screenshots/01_auth/register/register_terms_conditions.png" alt=""><div class="name">Үйлчилгээний нөхцөл (Зөвшөөрсөн)</div><div class="path"><strong>01_auth/register/</strong></div><div class="next">Дараагийн: → <a href="#screen-7">Дэлгэц 7</a> (Нэвтрэх)</div></div>
+      <div class="card" id="screen-6"><span class="card-num">6</span><img src="screenshots/01_auth/register/register_burtgel_uusgeh.jpg" alt=""><div class="name">Бүртгэл үүсгэх (auth/register)</div><div class="path"><strong>01_auth/register/</strong></div><div class="next">Дараагийн: → <a href="#register-terms">Үйлчилгээний нөхцөл 6′</a></div></div>
+      <div class="card" id="register-success"><span class="card-num">6″</span><img src="screenshots/01_auth/register/register_success_login_created.png" alt=""><div class="name">Нэвтрэх эрх амжилттай үүслээ (нэвтрэх нэр, нууц үгээр нэвтрэнэ үү)</div><div class="path"><strong>01_auth/register/</strong></div><div class="next">Дараагийн: → <a href="#screen-7">Дэлгэц 7</a> (Нэвтрэх)</div></div>
+      <div class="card" id="register-terms"><span class="card-num">6′</span><img src="screenshots/01_auth/register/register_terms_conditions.png" alt=""><div class="name">Үйлчилгээний нөхцөл (Зөвшөөрсөн)</div><div class="path"><strong>01_auth/register/</strong></div><div class="next">Дараагийн: → <a href="#register-success">Нэвтрэх эрх үүслээ 6″</a> → <a href="#screen-7">Дэлгэц 7</a></div></div>
     </div>
   </section>
 
@@ -164,13 +196,41 @@
     <div class="folder-label">screenshots/01_auth/<strong>home</strong><small>3 файл · Нүүр (ДАН таниулах), Дэлгэц 12–13</small></div>
     <div class="grid">
       <div class="card" id="home-main"><span class="card-num">11′</span><img src="screenshots/01_auth/home/home_00_main_dan.png" alt=""><div class="name">Нүүр — ДАН таниулах (Хадгаламж, Зээл, Виртуал карт, Лайфстайл)</div><div class="path"><strong>01_auth/home/</strong></div><div class="next">Дараагийн: → <a href="#screen-12">Дэлгэц 12</a>, <a href="#screen-14">Зээл 14</a>, <a href="#savings-01">Хадгаламж</a></div></div>
-      <div class="card" id="screen-12"><span class="card-num">12</span><img src="screenshots/01_auth/home/home_digital_loan_tab.jpg" alt=""><div class="name">Нүүр — Дижитал зээлийн таб</div><div class="path"><strong>01_auth/home/</strong></div><div class="next">Дараагийн: → <a href="#screen-14">Зээл 14</a>, <a href="#savings-01">Хадгаламж</a>, <a href="#screen-58">Профайл 58</a></div></div>
-      <div class="card" id="screen-13"><span class="card-num">13</span><img src="screenshots/01_auth/home/home_loan_cta.jpg" alt=""><div class="name">Нүүр — Зээл авах уриа (CTA)</div><div class="path"><strong>01_auth/home/</strong></div><div class="next">Дараагийн: → <a href="#screen-14">Дэлгэц 14</a> (Зээл хүсэх)</div></div>
+      <div class="card" id="screen-12"><span class="card-num">12</span><img src="screenshots/01_auth/home/home_digital_loan_tab.jpg" alt=""><div class="name">Нүүр — Дижитал зээлийн таб</div><div class="path"><strong>01_auth/home/</strong></div><div class="next">Дараагийн: → <a href="#screen-14">Зээл 14</a>, <a href="#savings-01">Хадгаламж</a>, <a href="#screen-58">Профайл 58</a> — <em>danStatus=true &amp; memberstatus=false үед</em> <a href="#member-cta">Гишүүнчлэлийн урилга</a></div></div>
+      <div class="card" id="screen-13"><span class="card-num">13</span><img src="screenshots/01_auth/home/home_loan_cta.jpg" alt=""><div class="name">Нүүр — Зээл аваагүй хэрэглэгчид харагдах дэлгэц (CTA)</div><div class="path"><strong>01_auth/home/</strong></div><div class="next">Дараагийн: → <a href="#screen-14">Дэлгэц 14</a> (Зээл хүсэх)</div></div>
+    </div>
+  </section>
+
+  <section id="member">
+    <div class="folder-label">screenshots/01_auth/<strong>member</strong><small>5 файл · Гишүүнчлэл 70–74 (danStatus=true, memberstatus=false үед)</small></div>
+    <div class="flow-edges">
+      <div class="flow-edges-title">Гишүүнчлэлийн хураамжийн урсгал</div>
+      <div class="flow-edges-row">
+        <a href="#member-cta"><img src="screenshots/01_auth/member/member_01_invite.png" alt="CTA"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#member-contract"><img src="screenshots/01_auth/member/member_02_contract.png" alt="Contract"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#member-fee"><img src="screenshots/01_auth/member/member_03_fee.png" alt="Fee"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#member-qpay"><img src="screenshots/01_auth/member/member_04_qpay.png" alt="QPay"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#member-done"><img src="screenshots/01_auth/member/member_05_done.png" alt="Done"></a>
+      </div>
+      <div style="color:#94a3b8; font-size:.85rem; margin-top:6px;">
+        Дан баталгаажсан (danStatus=true) боловч гишүүнчлэлийн төлөв идэвхгүй (memberstatus=false) үед л урсгал идэвхжинэ.
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card" id="member-cta"><span class="card-num">70</span><img src="screenshots/01_auth/member/member_01_invite.png" alt=""><div class="name">Гишүүнчлэлийн урилга (Memberline)</div><div class="path"><strong>01_auth/member/</strong></div><div class="next">Дараагийн: → <a href="#member-contract">Гишүүнчлэлийн гэрээ</a></div></div>
+      <div class="card" id="member-contract"><span class="card-num">71</span><img src="screenshots/01_auth/member/member_02_contract.png" alt=""><div class="name">Гишүүнчлэлийн гэрээ — нөхцөлийг зөвшөөрнө</div><div class="path"><strong>01_auth/member/</strong></div><div class="next">Дараагийн: → <a href="#member-fee">Хураамж төлөх (checkbox идэвхтэй)</a></div></div>
+      <div class="card" id="member-fee"><span class="card-num">72</span><img src="screenshots/01_auth/member/member_03_fee.png" alt=""><div class="name">Гишүүнчлэлийн хураамж (fee_list API → member_fee)</div><div class="path"><strong>01_auth/member/</strong></div><div class="next">Дараагийн: → <a href="#member-qpay">QPAY (type: MEMBER_FEE)</a></div></div>
+      <div class="card" id="member-qpay"><span class="card-num">73</span><img src="screenshots/01_auth/member/member_04_qpay.png" alt=""><div class="name">QPAY төлбөр (type: MEMBER_FEE)</div><div class="path"><strong>01_auth/member/</strong></div><div class="next">Дараагийн: → <a href="#member-done">Амжилттай</a></div></div>
+      <div class="card" id="member-done"><span class="card-num">74</span><img src="screenshots/01_auth/member/member_05_done.png" alt=""><div class="name">Гишүүнчлэл идэвхжлээ (memberstatus=true)</div><div class="path"><strong>01_auth/member/</strong></div><div class="next">Дараагийн: —</div></div>
     </div>
   </section>
 
   <section id="loan">
-    <div class="folder-label">screenshots/01_auth/<strong>loan</strong><small>24 файл · Дэлгэц 14–37</small></div>
+    <div class="folder-label">screenshots/01_auth/<strong>loan</strong><small>24+7 файл · Дэлгэц 14–37, 22→1–6 (идэвхтэй зээл) + сунгалт</small></div>
     <div class="grid">
       <div class="card" id="screen-14"><span class="card-num">14</span><img src="screenshots/01_auth/loan/loan_01_requests_investigation.png" alt=""><div class="name">Зээл — Судалж буй хүсэлтүүд</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-15">Дэлгэц 15</a></div></div>
       <div class="card" id="screen-15"><span class="card-num">15</span><img src="screenshots/01_auth/loan/loan_02_collateral_list.png" alt=""><div class="name">Барьцааны мэдээлэл — Жагсаалт</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-16">Дэлгэц 16</a>, <a href="#screen-17">Дэлгэц 17</a>, <a href="#screen-18">Дэлгэц 18</a></div></div>
@@ -180,7 +240,14 @@
       <div class="card" id="screen-19"><span class="card-num">19</span><img src="screenshots/01_auth/loan/loan_06_collateral_photos.png" alt=""><div class="name">Барьцаа хөрөнгийн зураг сонгох</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-20">Дэлгэц 20</a></div></div>
       <div class="card" id="screen-20"><span class="card-num">20</span><img src="screenshots/01_auth/loan/loan_07_collateral_photo_source.png" alt=""><div class="name">Зураг авах эх сурвалж сонгох (Gallery/Camera)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-21">Дэлгэц 21</a></div></div>
       <div class="card" id="screen-21"><span class="card-num">21</span><img src="screenshots/01_auth/loan/loan_08_requests_decided.png" alt=""><div class="name">Зээл — Шийдвэрлэсэн хүсэлтүүд</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22">Дэлгэц 22</a></div></div>
-      <div class="card" id="screen-22"><span class="card-num">22</span><img src="screenshots/01_auth/loan/loan_09_no_active_loans.png" alt=""><div class="name">Идэвхтэй зээл байхгүй</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-23">Дэлгэц 23</a></div></div>
+      <div class="card" id="screen-22"><span class="card-num">22</span><img src="screenshots/01_auth/loan/loan_09_no_active_loans.png" alt=""><div class="name">Идэвхтэй зээл байхгүй</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22-active-1">Идэвхтэй зээл (жагсаалт)</a>, <a href="#screen-23">Дэлгэц 23</a></div></div>
+      <div class="card" id="screen-22-active-1"><span class="card-num">22→1</span><img src="screenshots/01_auth/loan/loan_22_active_1.png" alt=""><div class="name">Идэвхтэй зээл — жагсаалт (таб: Идэвхтэй зээл)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22-active-2">Зээлийн дэлгэрэнгүй</a></div></div>
+      <div class="card" id="screen-22-active-2"><span class="card-num">22→2</span><img src="screenshots/01_auth/loan/loan_22_active_2.png" alt=""><div class="name">Зээлийн дэлгэрэнгүй (гэрээний мэдээлэл, төлөлт/хаах/хуваарь)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22-active-3">Эргэн төлөлт хийх</a>, <a href="#screen-22-extend">Хугацаа сунгах</a></div></div>
+      <div class="card" id="screen-22-extend"><span class="card-num">22→e</span><img src="screenshots/01_auth/loan/loan_22_extend.png" alt=""><div class="name">Зээлийн хугацаа сунгалт</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22-active-5">Банкаар төлөх</a>, <a href="#screen-22-active-6">QPAY</a></div></div>
+      <div class="card" id="screen-22-active-3"><span class="card-num">22→3</span><img src="screenshots/01_auth/loan/loan_22_active_3.png" alt=""><div class="name">Эргэн төлөлт хийх (дүн сонгох, төлбөрийн арга)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-22-active-4">Үндсэн данснаас</a>, <a href="#screen-22-active-5">Банкаар</a>, <a href="#screen-22-active-6">QPAY</a></div></div>
+      <div class="card" id="screen-22-active-4"><span class="card-num">22→4</span><img src="screenshots/01_auth/loan/loan_22_active_4.png" alt=""><div class="name">Үндсэн данснаас төлөх (дүн, баталгаажуулалт)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: — (төлбөр үргэлжилнэ)</div></div>
+      <div class="card" id="screen-22-active-5"><span class="card-num">22→5</span><img src="screenshots/01_auth/loan/loan_22_active_5.png" alt=""><div class="name">Банкаар төлөх (дансны мэдээлэл, гүйлгээний утга)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: — (шилжүүлэг хийх)</div></div>
+      <div class="card" id="screen-22-active-6"><span class="card-num">22→6</span><img src="screenshots/01_auth/loan/loan_22_active_6.png" alt=""><div class="name">QPAY төлөлт (банк/төлбөрийн апп сонгох)</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: — (QPAY процесс)</div></div>
       <div class="card" id="screen-23"><span class="card-num">23</span><img src="screenshots/01_auth/loan/loan_10_products_traditional_list.png" alt=""><div class="name">Уламжлалт зээлийн бүтээгдэхүүнүүд</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-24">Дэлгэц 24</a></div></div>
       <div class="card" id="screen-24"><span class="card-num">24</span><img src="screenshots/01_auth/loan/loan_11_digital_list_empty.png" alt=""><div class="name">Дижитал зээл — бичилт олдсонгүй</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-25">Дэлгэц 25</a></div></div>
       <div class="card" id="screen-25"><span class="card-num">25</span><img src="screenshots/01_auth/loan/loan_12_auto_products.png" alt=""><div class="name">Автомашины зээлийн бүтээгдэхүүнүүд</div><div class="path"><strong>01_auth/loan/</strong></div><div class="next">Дараагийн: → <a href="#screen-26">Дэлгэц 26</a></div></div>
@@ -200,11 +267,12 @@
   </section>
 
   <section id="savings">
-    <div class="folder-label">screenshots/01_auth/<strong>savings</strong><small>12 файл · Хадгаламж 1–4, Дэлгэц 50–57</small></div>
+    <div class="folder-label">screenshots/01_auth/<strong>savings</strong><small>13 файл · Хадгаламж 1–4 (+амжилт), Дэлгэц 50–57</small></div>
     <div class="grid">
       <div class="card" id="savings-01"><span class="card-num">1</span><img src="screenshots/01_auth/savings/savings_01_overview.png" alt=""><div class="name">Хадгаламж — Идэвхтэй хадгаламж (Сар бүр хүү авах)</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#savings-02">Дэлгэрэнгүй</a></div></div>
       <div class="card" id="savings-02"><span class="card-num">2</span><img src="screenshots/01_auth/savings/savings_02_details.png" alt=""><div class="name">Хадгаламж дэлгэрэнгүй (орлого, түүх, гэрээ)</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#savings-03">Орлого хийх</a>, <a href="#savings-04">Хуулга</a></div></div>
-      <div class="card" id="savings-03"><span class="card-num">3</span><img src="screenshots/01_auth/savings/savings_03_deposit.png" alt=""><div class="name">Орлого хийх (мөнгөн дүн оруулах)</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#screen-50">Дэлгэц 50</a></div></div>
+      <div class="card" id="savings-03"><span class="card-num">3</span><img src="screenshots/01_auth/savings/savings_03_deposit.png" alt=""><div class="name">Орлого хийх (мөнгөн дүн оруулах)</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#screen-50">Дэлгэц 50</a>, <a href="#savings-open-success">Амжилттай нээгдлээ</a></div></div>
+      <div class="card" id="savings-open-success"><span class="card-num">4′</span><img src="screenshots/01_auth/savings/savings_open_success_new.png" alt=""><div class="name">Хадгаламжийн данс амжилттай нээгдлээ</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: — (хаах)</div></div>
       <div class="card" id="savings-04"><span class="card-num">4</span><img src="screenshots/01_auth/savings/savings_04_statement.png" alt=""><div class="name">Дансны хуулга (огноо, хугацааны шүүлт)</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#screen-50">Дэлгэц 50</a></div></div>
       <div class="card" id="screen-50"><span class="card-num">50</span><img src="screenshots/01_auth/savings/savings_02.jpg" alt=""><div class="name">Хадгаламж 2 Гэрээ харуулах дэлгэц</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#screen-51">Дэлгэц 51</a></div></div>
       <div class="card" id="screen-51"><span class="card-num">51</span><img src="screenshots/01_auth/savings/savings_03.jpg" alt=""><div class="name">Хадгаламж 3 Дансны хуулга</div><div class="path"><strong>01_auth/savings/</strong></div><div class="next">Дараагийн: → <a href="#screen-52">Дэлгэц 52</a></div></div>
@@ -218,9 +286,28 @@
   </section>
 
   <section id="profile">
-    <div class="folder-label">screenshots/01_auth/<strong>profile</strong><small>12 файл · Дэлгэц 58–69</small></div>
+    <div class="folder-label">screenshots/01_auth/<strong>profile</strong><small>13 файл · Дэлгэц 58–69 + Мэдэгдэл</small></div>
+    <div class="flow-edges">
+      <div class="flow-edges-title">Цагаан горим харуулах байдал — edge-ээр холбогдсон урсгал</div>
+      <div class="flow-edges-row">
+        <a href="#screen-58-flow-1" title="Профайл цэс (Буцах, Шөнийн төлөв)"><img src="screenshots/01_auth/profile/profile_58_flow_1.png" alt="58→1"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#screen-58-flow-2" title="Нүүр (Үндсэн данс, Хадгаламж, Зээл)"><img src="screenshots/01_auth/profile/profile_58_flow_2.png" alt="58→2"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#screen-58-flow-3" title="Хадгаламж (Идэвхтэй хадгаламж)"><img src="screenshots/01_auth/profile/profile_58_flow_3.png" alt="58→3"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#screen-58-flow-4" title="Зээл (Идэвхтэй зээл, хүсэлт илгээх)"><img src="screenshots/01_auth/profile/profile_58_flow_4.png" alt="58→4"></a>
+        <span class="flow-arrow">→</span>
+        <a href="#screen-58-flow-5" title="Зээлийн төрөл (Уламжлалт / Дижитал)"><img src="screenshots/01_auth/profile/profile_58_flow_5.png" alt="58→5"></a>
+      </div>
+    </div>
     <div class="grid">
-      <div class="card" id="screen-58"><span class="card-num">58</span><img src="screenshots/01_auth/profile/profile_01_menu.png" alt=""><div class="name">Профайл цэс (Шөнийн төлөв, Холболт салгах)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-59">Дэлгэц 59</a></div></div>
+      <div class="card" id="screen-58"><span class="card-num">58</span><img src="screenshots/01_auth/profile/profile_01_menu.png" alt=""><div class="name">Профайл цэс (Шөнийн төлөв, Холболт салгах)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-58-flow-1">Цагаан горим flow 58→1</a>, <a href="#screen-59">Тохиргоо 59</a>, <a href="#screen-61">Хувийн мэдээлэл 61</a>, <a href="#screen-62">Банкны данс 62</a>, <a href="#screen-64">Гэр бүл 64</a>, <a href="#screen-66">Ажил эрхлэлт 66</a>, <a href="#screen-68">Холбоо барих 68</a>, <a href="#screen-7">Холболт салгах → Нэвтрэх 7</a></div></div>
+      <div class="card" id="screen-58-flow-1"><span class="card-num">58→1</span><img src="screenshots/01_auth/profile/profile_58_flow_1.png" alt=""><div class="name">Цагаан горим — Профайл цэс (Буцах, Шөнийн төлөв)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-58-flow-2">58→2</a></div></div>
+      <div class="card" id="screen-58-flow-2"><span class="card-num">58→2</span><img src="screenshots/01_auth/profile/profile_58_flow_2.png" alt=""><div class="name">Цагаан горим — Нүүр (Үндсэн данс, Хадгаламж, Зээл)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-58-flow-3">58→3</a></div></div>
+      <div class="card" id="screen-58-flow-3"><span class="card-num">58→3</span><img src="screenshots/01_auth/profile/profile_58_flow_3.png" alt=""><div class="name">Цагаан горим — Хадгаламж (Идэвхтэй хадгаламж)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-58-flow-4">58→4</a></div></div>
+      <div class="card" id="screen-58-flow-4"><span class="card-num">58→4</span><img src="screenshots/01_auth/profile/profile_58_flow_4.png" alt=""><div class="name">Цагаан горим — Зээл (Идэвхтэй зээл, хүсэлт илгээх)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-58-flow-5">58→5</a></div></div>
+      <div class="card" id="screen-58-flow-5"><span class="card-num">58→5</span><img src="screenshots/01_auth/profile/profile_58_flow_5.png" alt=""><div class="name">Цагаан горим — Зээлийн төрөл (Уламжлалт / Дижитал)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: — (Цагаан горим flow; үндсэн профайл руу буцахгүй)</div></div>
       <div class="card" id="screen-59"><span class="card-num">59</span><img src="screenshots/01_auth/profile/profile_02_settings.png" alt=""><div class="name">Тохиргоо (Утас солих, Нууц үг солих)</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-60">Дэлгэц 60</a></div></div>
       <div class="card" id="screen-60"><span class="card-num">60</span><img src="screenshots/01_auth/profile/profile_03_reset_password.png" alt=""><div class="name">Нууц үг солих</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-61">Дэлгэц 61</a></div></div>
       <div class="card" id="screen-61"><span class="card-num">61</span><img src="screenshots/01_auth/profile/profile_04_personal_info.png" alt=""><div class="name">Хувийн мэдээлэл</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-62">Дэлгэц 62</a></div></div>
@@ -232,6 +319,7 @@
       <div class="card" id="screen-67"><span class="card-num">67</span><img src="screenshots/01_auth/profile/profile_10_employment_edit.png" alt=""><div class="name">Ажил эрхлэлт засах</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-68">Дэлгэц 68</a></div></div>
       <div class="card" id="screen-68"><span class="card-num">68</span><img src="screenshots/01_auth/profile/profile_11_contact.png" alt=""><div class="name">Бидэнтэй холбогдох</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: → <a href="#screen-69">Дэлгэц 69</a></div></div>
       <div class="card" id="screen-69"><span class="card-num">69</span><img src="screenshots/01_auth/profile/profile_12_branch_location.png" alt=""><div class="name">Салбар байршил</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: — (профайл)</div></div>
+      <div class="card" id="screen-75"><span class="card-num">75</span><img src="screenshots/01_auth/profile/profile_notifications.png" alt=""><div class="name">Мэдэгдлүүд</div><div class="path"><strong>01_auth/profile/</strong></div><div class="next">Дараагийн: —</div></div>
     </div>
   </section>
 
